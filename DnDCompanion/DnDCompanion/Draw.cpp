@@ -6,22 +6,22 @@
 
 float findxMax(int x){
 
-	float xMax = -1 + x*(60 * (2 / 720));
+	float xMax = -1 + x*(60 * (2 / 1280));
 	return xMax;
 }
 float findxMin(int x){
 
-	float xMin = -1 + (x - 1)*(60 * (2 / 720));
+	float xMin = -1 + (x - 1)*(60 * (2 / 1280));
 	return xMin;
 }
 float findyMax(int y){
 
-	float yMax = -1 + y*(60 * (2 / 1280));
+	float yMax = -1 + y*(60 * (2 / 720));
 	return yMax;
 }
 float findyMin(int y){
 
-	float yMin = -1 + (y - 1)*(60 * (2 / 1280));
+	float yMin = -1 + (y - 1)*(60 * (2 / 720));
 	return yMin;
 }
 

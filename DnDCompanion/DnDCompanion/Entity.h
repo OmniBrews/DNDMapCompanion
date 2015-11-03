@@ -26,5 +26,5 @@ public:
 	std::string getImage();
 	double getHealth();
 	double getSightRange();
-	void setPostiion(int x, int y);
+	void setPostion(int x, int y);
 };

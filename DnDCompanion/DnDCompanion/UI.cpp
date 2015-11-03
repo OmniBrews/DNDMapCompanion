@@ -26,8 +26,13 @@
 int main_window;
 Map *map;
 bool draw_grid;
-int display_x;
-int display_y;
+int display_x;				//Number of columns drawn
+int display_y;				//Number of rows drawn
+int bottom_left_x;			//X-Coordinate on the map that is drawn in the bottom left corner
+int bottom_left_y;			//Y-Coordinate on the map that is drawn in the bottom left corner
+int entityID;				//Default entity ID assigned the new entities then increamented
+int draw_mode;				//If 0 draw entity. If 1 draw terrain.
+TerrainType terrain_type;	//Type of terrain being drawn
 
 float findxMax(int x){
 
@@ -59,12 +64,20 @@ void myInit(){
 }
 
 void drawTerrain(Terrain T, int xin, int yin){
-	float xMax = findxMax(xin);
-	float xMin = findxMin(xin);
-	float yMax = findyMax(yin);
-	float yMin = findyMin(yin);
+	float xMax = findxMax(xin - bottom_left_x);
+	float xMin = findxMin(xin - bottom_left_x);
+	float yMax = findyMax(yin - bottom_left_y);
+	float yMin = findyMin(yin - bottom_left_y);
 
-	glColor3f(.5, .2, .2);
+	switch (T.getType()){
+	case TerrainType::Basic:
+		glColor3f(.5, .2, .2);
+		break;
+	case TerrainType::River:
+		glColor3f(.2, .2, .7);
+		break;
+	}
+
 	glBegin(GL_POLYGON);
 	glVertex2f(xMin, yMin);
 	glVertex2f(xMax, yMin);
@@ -74,16 +87,16 @@ void drawTerrain(Terrain T, int xin, int yin){
 	//glFlush();
 }
 
-void drawEntity(Entity E){
-	int xin = E.getX();
-	int yin = E.getY();
+void drawEntity(Entity *E){
+	int xin = E->getX() - bottom_left_x;
+	int yin = E->getY() - bottom_left_y;
 
 	float xMax = findxMax(xin);
 	float xMin = findxMin(xin);
 	float yMax = findyMax(yin);
 	float yMin = findyMin(yin);
 
-	glColor3f(0.2, .5, .5);
+	glColor3f(.2, .5, .2);
 	glBegin(GL_POLYGON);
 	glVertex2f(xMin, yMin);
 	glVertex2f(xMax, yMin);
@@ -99,25 +112,22 @@ void myDisplay(void){
 	glMatrixMode(GL_PROJECTION);
 
 	//Draw Terrain
-	for (int i = 0; i < display_x; i++){
-		for (int j = 0; j < display_y; j++){
+	for (int i = bottom_left_x; i < bottom_left_x + display_x; i++){
+		for (int j = bottom_left_y; j < bottom_left_y + display_y; j++){
 			drawTerrain(map->terrainAtSquare(i, j), i , j);
 		}
 	}
 
 	//Draw Entities
-	for (int i = 0; i < display_x; i++){
-		for (int j = 0; j < display_y; j++){
-			std::vector<Entity*> entity_list = map->entitiesAtSquare(i, j);
-			for (int k = 0; k < entity_list.size(); k++){
-				Entity e = Entity(0, Player, "Player0", "", 10, 0);
-				e.setPostion(i, j);
-				drawEntity(e);
+	for (int i = bottom_left_x; i < bottom_left_x + display_x; i++){
+		for (int j = bottom_left_x; j < bottom_left_y + display_y; j++){
+			for (int k = 0; k < map->entitiesAtSquare(i,j).size(); k++){
+				drawEntity(map->entitiesAtSquare(i,j)[k]);
 			}
 		}
 	}
 
-	//Draw Grided Map
+	//Draw Grided Lines
 	if (draw_grid){
 		glColor3f(1.0f, 1.0f, 1.0f);
 		glBegin(GL_LINES);
@@ -141,11 +151,75 @@ void myReshape(int x, int y){
 }
 
 void myKeyboard(unsigned char Key, int x, int y){
-
+	switch (Key){
+	case 97:	//a
+		if (bottom_left_x > 0)
+			bottom_left_x--;
+		break;
+	case 119:	//w
+		if (bottom_left_y < map->getMapHeight() - (1 + display_y))
+			bottom_left_y++;
+		break;
+	case 100:	//d
+		if (bottom_left_x < map->getMapWidth() - (1 + display_x))
+			bottom_left_x++;
+		break;
+	case 115:	//s
+		if (bottom_left_y > 0)
+			bottom_left_y--;
+		break;
+	case 9:		//tab
+		if (terrain_type == TerrainType::Basic)
+			terrain_type = TerrainType::Woods;
+		else
+			terrain_type = TerrainType::Basic;
+		break;
+	case 32:	//space
+		if (draw_mode == 0)
+			draw_mode = 1;
+		else
+			draw_mode = 0;
+		break;
+	default:	
+		break;
+	}
+	myDisplay();
 }
 
 void myMouse(int button, int button_state, int x, int y){
-
+	if (button_state == GLUT_DOWN){
+		int x_pos;
+		int y_pos;
+		switch (button){
+		case GLUT_LEFT_BUTTON:
+			if (x < 720){
+				switch (draw_mode){
+				case 0:
+					x_pos = display_x * x / 720;
+					y_pos = display_y * (720 - y) / 720;
+					map->createEntity(entityID, Player, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
+					entityID++;
+					break;
+				case 1:
+					x_pos = display_x * x / 720;
+					y_pos = display_y * (720 - y) / 720;
+					map->updateTerrainAtSquare(terrain_type, x_pos + bottom_left_x, y_pos + bottom_left_y);
+					break;
+				}
+			}
+			break;
+		case GLUT_RIGHT_BUTTON:
+			if (x < 720){
+				x_pos = display_x * x / 720;
+				y_pos = display_y * (720 - y) / 720;
+				if (map->entitiesAtSquare(x_pos, y_pos).size() > 0){
+					map->removeEntity(map->entitiesAtSquare(x_pos, y_pos)[0]);
+				}
+			}
+			break;
+		}
+	}
+	myDisplay();
 }
 
 void myMotion(int x, int y){
@@ -160,14 +234,11 @@ int main(int argc, char **argv)
 	draw_grid = true;
 	display_x = 12;
 	display_y = 12;
-
-	//Hardcoded example map
-	map->createEntity(0, Player, 0, 0, "Player 0", "", 10, 30);
-	map->createEntity(1, Player, 1, 1, "Player 1", "", 10, 30);
-	map->createEntity(2, Player, 2, 2, "Player 2", "", 10, 30);
-	map->createEntity(3, Player, 3, 3, "Player 3", "", 10, 30);
-	map->createEntity(4, Player, 4, 4, "Player 4", "", 10, 30);
-	map->createEntity(5, Player, 5, 5, "Player 5", "", 10, 30);
+	bottom_left_x = 0;
+	bottom_left_y = 0;
+	entityID = 0;
+	draw_mode = 0;
+	terrain_type = TerrainType::River;
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(1280, 720);
@@ -180,6 +251,10 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(myKeyboard);
 	glutMouseFunc(myMouse);
 	glutMotionFunc(myMotion);
+
+	//GLUI_Master.set_glutIdleFunc(NULL);
+
+	//GLUI *glui = GLUI_Master.create_glui("DND Map Companion", 0, 80, 20);
 
 	myGlui();
 	myInit();

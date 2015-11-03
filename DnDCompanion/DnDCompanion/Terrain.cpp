@@ -29,6 +29,10 @@ std::vector<Entity*> Terrain::getEntities()
 	return entities_in_square;
 }
 
+void Terrain::updateTerrainType(TerrainType t){
+	type = t;
+}
+
 void Terrain::addEntity(Entity * e)
 {
 	entities_in_square.push_back(e);

@@ -6,7 +6,7 @@ Map::Map(int x, int y)
 {
 	x_size = x;
 	y_size = y;
-	for (int i = 0; i < x_size; x++) 
+	for (int i = 0; i < x_size; i++) 
 	{
 		std::vector<Terrain> tempVector;
 		for (int j = 0; j < y_size; j++)
@@ -37,26 +37,37 @@ std::vector<Entity*> Map::entitiesAtSquare(int x, int y)
 	return terrain_map[x][y].getEntities();
 }
 
-TerrainType Map::terrainAtSquare(int x, int y)
+Terrain Map::terrainAtSquare(int x, int y)
+{
+	return terrain_map[x][y];
+}
+
+TerrainType Map::terrainTypeAtSquare(int x, int y)
 {
 	return terrain_map[x][y].getType();
+}
+
+void Map::updateTerrainAtSquare(TerrainType t, int x, int y){
+	terrain_map[x][y].updateTerrainType(t);
 }
 
 void Map::addEntity(Entity e)
 {
 	entity_list.push_back(e);
+	terrain_map[e.getX()][e.getY()].addEntity(&e);
 }
 
 void Map::createEntity(int entity_ID, EntityType type, int x, int y, std::string name, std::string image, double health, double sight_range)
 {
-	Entity temp = Entity(entity_ID, type, name, image, health, sight_range);
-	temp.setPostiion(x, y);
-	entity_list.push_back(temp);
+	Entity *temp = new Entity(entity_ID, type, name, image, health, sight_range);
+	temp->setPostion(x, y);
+	entity_list.push_back(*temp);
+	terrain_map[x][y].addEntity(temp);
 }
 
 void Map::moveEntity(int entity_ID, int x, int y)
 {
-	findEntity(entity_ID)->setPostiion(x, y);
+	findEntity(entity_ID)->setPostion(x, y);
 }
 
 void Map::removeEntity(Entity* entity)
@@ -90,8 +101,4 @@ Entity* Map::findEntity(int entity_ID)
 		}
 	}
 	return new Entity();
-}
-
-int main() {
-	return 0;
 }

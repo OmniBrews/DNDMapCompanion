@@ -16,7 +16,9 @@ public:
 	int getMapWidth();
 	int getMapHeight();
 	std::vector<Entity*> entitiesAtSquare(int x, int y);
-	TerrainType terrainAtSquare(int x, int y);
+	Terrain terrainAtSquare(int x, int y);
+	TerrainType terrainTypeAtSquare(int x, int y);
+	void updateTerrainAtSquare(TerrainType t, int x, int y);
 	void addEntity(Entity e);
 	void createEntity(int entity_ID, EntityType type, int x, int y, std::string name, std::string image, double health, double sight_range);
 	void moveEntity(int entity_ID, int x, int y);

@@ -122,6 +122,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h" />

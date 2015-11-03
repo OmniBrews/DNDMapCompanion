@@ -19,6 +19,7 @@ public:
 	TerrainType getType();
 	std::string getImage();
 	std::vector<Entity*> getEntities();
+	void updateTerrainType(TerrainType t);
 	void addEntity(Entity* e);
 	void removeEntitiy(Entity* e);
 };

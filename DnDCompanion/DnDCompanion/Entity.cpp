@@ -60,7 +60,7 @@ double Entity::getSightRange()
 	return sight_range;
 }
 
-void Entity::setPostiion(int x, int y)
+void Entity::setPostion(int x, int y)
 {
 	x_pos = x;
 	y_pos = y;

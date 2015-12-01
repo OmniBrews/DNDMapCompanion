@@ -30,9 +30,14 @@ int display_x;				//Number of columns drawn
 int display_y;				//Number of rows drawn
 int bottom_left_x;			//X-Coordinate on the map that is drawn in the bottom left corner
 int bottom_left_y;			//Y-Coordinate on the map that is drawn in the bottom left corner
+bool left_mouse_down;		//Left mouse button is down
 int entityID;				//Default entity ID assigned the new entities then increamented
 int draw_mode;				//If 0 draw entity. If 1 draw terrain.
 TerrainType terrain_type;	//Type of terrain being drawn
+
+//GLUI Stuff
+GLUI_RadioGroup *radio;
+int tt = 0;
 
 float findxMax(int x){
 
@@ -64,17 +69,32 @@ void myInit(){
 }
 
 void drawTerrain(Terrain T, int xin, int yin){
+	glutSetWindow(main_window);
+
 	float xMax = findxMax(xin - bottom_left_x);
 	float xMin = findxMin(xin - bottom_left_x);
 	float yMax = findyMax(yin - bottom_left_y);
 	float yMin = findyMin(yin - bottom_left_y);
 
+	//enum TerrainType { Basic, Woods, River, Brush, Desert, Custom };
 	switch (T.getType()){
 	case TerrainType::Basic:
-		glColor3f(.5, .2, .2);
+		glColor3f(.2, .2, .2);
+		break;
+	case TerrainType::Woods:
+		glColor3f(.2, .7, .2);
 		break;
 	case TerrainType::River:
 		glColor3f(.2, .2, .7);
+		break;
+	case TerrainType::Brush:
+		glColor3f(.2, .5, .5);
+		break;
+	case TerrainType::Desert:
+		glColor3f(.5, .2, .5);
+		break;
+	case TerrainType::Custom:
+		glColor3f(.4, .4, .4);
 		break;
 	}
 
@@ -88,6 +108,8 @@ void drawTerrain(Terrain T, int xin, int yin){
 }
 
 void drawEntity(Entity *E){
+	glutSetWindow(main_window);
+
 	int xin = E->getX() - bottom_left_x;
 	int yin = E->getY() - bottom_left_y;
 
@@ -107,6 +129,8 @@ void drawEntity(Entity *E){
 }
 
 void myDisplay(void){
+	glutSetWindow(main_window);
+
 	glClearColor(.2f, .2f, .2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
@@ -170,7 +194,7 @@ void myKeyboard(unsigned char Key, int x, int y){
 		break;
 	case 9:		//tab
 		if (terrain_type == TerrainType::Basic)
-			terrain_type = TerrainType::Woods;
+			terrain_type = TerrainType::River;
 		else
 			terrain_type = TerrainType::Basic;
 		break;
@@ -187,11 +211,12 @@ void myKeyboard(unsigned char Key, int x, int y){
 }
 
 void myMouse(int button, int button_state, int x, int y){
+	int x_pos;
+	int y_pos;
 	if (button_state == GLUT_DOWN){
-		int x_pos;
-		int y_pos;
 		switch (button){
 		case GLUT_LEFT_BUTTON:
+			left_mouse_down = true;
 			if (x < 720){
 				switch (draw_mode){
 				case 0:
@@ -200,11 +225,11 @@ void myMouse(int button, int button_state, int x, int y){
 					map->createEntity(entityID, Player, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
 					entityID++;
 					break;
-				case 1:
+				/*case 1:
 					x_pos = display_x * x / 720;
 					y_pos = display_y * (720 - y) / 720;
 					map->updateTerrainAtSquare(terrain_type, x_pos + bottom_left_x, y_pos + bottom_left_y);
-					break;
+					break;*/
 				}
 			}
 			break;
@@ -219,11 +244,22 @@ void myMouse(int button, int button_state, int x, int y){
 			break;
 		}
 	}
+	if (button_state == GLUT_UP){
+		if (button == GLUT_LEFT_BUTTON){
+			left_mouse_down = false;
+		}
+	}
 	myDisplay();
 }
 
 void myMotion(int x, int y){
-
+	int x_pos, y_pos;
+	if (left_mouse_down && (draw_mode == 1)){
+		x_pos = display_x * x / 720;
+		y_pos = display_y * (720 - y) / 720;
+		map->updateTerrainAtSquare((TerrainType) tt, x_pos + bottom_left_x, y_pos + bottom_left_y);
+	}
+	myDisplay();
 }
 
 
@@ -236,6 +272,7 @@ int main(int argc, char **argv)
 	display_y = 12;
 	bottom_left_x = 0;
 	bottom_left_y = 0;
+	left_mouse_down = false;
 	entityID = 0;
 	draw_mode = 0;
 	terrain_type = TerrainType::River;
@@ -246,18 +283,26 @@ int main(int argc, char **argv)
 	main_window = glutCreateWindow("DND Map Companion");
 
 	glutDisplayFunc(myDisplay);
-	glutIdleFunc(NULL);
+	//glutIdleFunc(NULL);
 	glutReshapeFunc(myReshape);
 	glutKeyboardFunc(myKeyboard);
 	glutMouseFunc(myMouse);
 	glutMotionFunc(myMotion);
 
-	//GLUI_Master.set_glutIdleFunc(NULL);
+	GLUI_Master.set_glutIdleFunc(NULL);
 
-	//GLUI *glui = GLUI_Master.create_glui("DND Map Companion", 0, 80, 20);
+	GLUI *glui = GLUI_Master.create_glui("DND Map Companion");
 
-	myGlui();
-	myInit();
+	GLUI_Panel *obj_panel = new GLUI_Panel(glui, "Terrain Type");
+	radio = glui->add_radiogroup_to_panel(obj_panel, &tt);
+	glui->add_radiobutton_to_group(radio, "Basic");
+	glui->add_radiobutton_to_group(radio, "Woods");
+	glui->add_radiobutton_to_group(radio, "River");
+	glui->add_radiobutton_to_group(radio, "Brush");
+	glui->add_radiobutton_to_group(radio, "Desert");
+	glui->add_radiobutton_to_group(radio, "Custom");
+
+	glui->set_main_gfx_window(main_window);
 
 	glutMainLoop();
 

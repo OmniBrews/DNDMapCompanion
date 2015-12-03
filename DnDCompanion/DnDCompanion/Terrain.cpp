@@ -38,7 +38,7 @@ void Terrain::addEntity(Entity * e)
 	entities_in_square.push_back(e);
 }
 
-void Terrain::removeEntitiy(Entity * e)
+void Terrain::removeEntity(Entity * e)
 {
 	std::vector<Entity*>::iterator position = entities_in_square.begin();
 	while (position != entities_in_square.end() && (*position)->getID() != e->getID())

@@ -21,5 +21,5 @@ public:
 	std::vector<Entity*> getEntities();
 	void updateTerrainType(TerrainType t);
 	void addEntity(Entity* e);
-	void removeEntitiy(Entity* e);
+	void removeEntity(Entity* e);
 };

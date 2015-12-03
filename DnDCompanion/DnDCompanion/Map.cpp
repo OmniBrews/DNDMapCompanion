@@ -67,7 +67,10 @@ void Map::createEntity(int entity_ID, EntityType type, int x, int y, std::string
 
 void Map::moveEntity(int entity_ID, int x, int y)
 {
-	findEntity(entity_ID)->setPostion(x, y);
+	Entity *temp = findEntity(entity_ID);
+	terrain_map[temp->getX()][temp->getY()].removeEntity(temp);
+	temp->setPostion(x, y);
+	terrain_map[x][y].addEntity(temp);
 }
 
 void Map::removeEntity(Entity* entity)
@@ -77,7 +80,7 @@ void Map::removeEntity(Entity* entity)
 		return;
 	}
 
-	terrain_map[entity->getX()][entity->getY()].removeEntitiy(entity);
+	terrain_map[entity->getX()][entity->getY()].removeEntity(entity);
 	
 	std::vector<Entity>::iterator position = entity_list.begin();
 	while (position != entity_list.end() && position->getID() != entity->getID())

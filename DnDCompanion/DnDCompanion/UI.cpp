@@ -31,6 +31,9 @@ int display_y;				//Number of rows drawn
 int bottom_left_x;			//X-Coordinate on the map that is drawn in the bottom left corner
 int bottom_left_y;			//Y-Coordinate on the map that is drawn in the bottom left corner
 bool left_mouse_down;		//Left mouse button is down
+bool right_mouse_down;		//Right mouse button is down
+int right_x;				//X-Coordinate where right mouse button was down
+int right_y;				//Y-Coordinate where right mouse button was down
 int entityID;				//Default entity ID assigned the new entities then increamented
 int draw_mode;				//If 0 draw entity. If 1 draw terrain.
 TerrainType terrain_type;	//Type of terrain being drawn
@@ -236,6 +239,11 @@ void myMouse(int button, int button_state, int x, int y){
 			break;
 		case GLUT_RIGHT_BUTTON:
 			if (x < 720){
+				right_mouse_down = true;
+				right_x = display_x * x / 720 + bottom_left_x;
+				right_y = display_y * (720 - y) / 720 + bottom_left_y;
+			}
+			if (x < 720 && (draw_mode == 0)){
 				x_pos = display_x * x / 720;
 				y_pos = display_y * (720 - y) / 720;
 				if (map->entitiesAtSquare(x_pos, y_pos).size() > 0){
@@ -249,13 +257,25 @@ void myMouse(int button, int button_state, int x, int y){
 		if (button == GLUT_LEFT_BUTTON){
 			left_mouse_down = false;
 		}
+		if (button == GLUT_RIGHT_BUTTON){
+			right_mouse_down = false;
+			if (x < 720 && (draw_mode == 1)){
+				x_pos = display_x * x / 720 + bottom_left_x;
+				y_pos = display_y * (720 - y) / 720 + bottom_left_y;
+				for (int i = std::min(x_pos, right_x); i <= std::max(x_pos, right_x); i++){
+					for (int j = std::min(y_pos, right_y); j <= std::max(y_pos, right_y); j++){
+						map->updateTerrainAtSquare((TerrainType)tt, i, j);
+					}
+				}
+			}
+		}
 	}
 	myDisplay();
 }
 
 void myMotion(int x, int y){
 	int x_pos, y_pos;
-	if (left_mouse_down && (draw_mode == 1)){
+	if (left_mouse_down && (draw_mode == 1) && (x < 720)){
 		x_pos = display_x * x / 720;
 		y_pos = display_y * (720 - y) / 720;
 		map->updateTerrainAtSquare((TerrainType) tt, x_pos + bottom_left_x, y_pos + bottom_left_y);
@@ -292,7 +312,7 @@ int main(int argc, char **argv)
 
 	GLUI_Master.set_glutIdleFunc(NULL);
 
-	GLUI *glui = GLUI_Master.create_glui("DND Map Companion");
+	GLUI *glui = GLUI_Master.create_glui_subwindow(main_window, GLUI_SUBWINDOW_RIGHT);
 
 	GLUI_Panel *mode_panel = new GLUI_Panel(glui, "Draw Mode");
 	mode_radio = glui->add_radiogroup_to_panel(mode_panel, &draw_mode);

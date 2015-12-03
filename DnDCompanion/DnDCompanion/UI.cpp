@@ -36,7 +36,8 @@ int draw_mode;				//If 0 draw entity. If 1 draw terrain.
 TerrainType terrain_type;	//Type of terrain being drawn
 
 //GLUI Stuff
-GLUI_RadioGroup *radio;
+GLUI_RadioGroup *terrain_radio;
+GLUI_RadioGroup *mode_radio;
 int tt = 0;
 
 float findxMax(int x){
@@ -79,7 +80,7 @@ void drawTerrain(Terrain T, int xin, int yin){
 	//enum TerrainType { Basic, Woods, River, Brush, Desert, Custom };
 	switch (T.getType()){
 	case TerrainType::Basic:
-		glColor3f(.2, .2, .2);
+		glColor3f(.5, .5, .5);
 		break;
 	case TerrainType::Woods:
 		glColor3f(.2, .7, .2);
@@ -192,7 +193,7 @@ void myKeyboard(unsigned char Key, int x, int y){
 		if (bottom_left_y > 0)
 			bottom_left_y--;
 		break;
-	case 9:		//tab
+	/*case 9:		//tab
 		if (terrain_type == TerrainType::Basic)
 			terrain_type = TerrainType::River;
 		else
@@ -203,7 +204,7 @@ void myKeyboard(unsigned char Key, int x, int y){
 			draw_mode = 1;
 		else
 			draw_mode = 0;
-		break;
+		break;*/
 	default:	
 		break;
 	}
@@ -293,15 +294,21 @@ int main(int argc, char **argv)
 
 	GLUI *glui = GLUI_Master.create_glui("DND Map Companion");
 
-	GLUI_Panel *obj_panel = new GLUI_Panel(glui, "Terrain Type");
-	radio = glui->add_radiogroup_to_panel(obj_panel, &tt);
-	glui->add_radiobutton_to_group(radio, "Basic");
-	glui->add_radiobutton_to_group(radio, "Woods");
-	glui->add_radiobutton_to_group(radio, "River");
-	glui->add_radiobutton_to_group(radio, "Brush");
-	glui->add_radiobutton_to_group(radio, "Desert");
-	glui->add_radiobutton_to_group(radio, "Custom");
+	GLUI_Panel *mode_panel = new GLUI_Panel(glui, "Draw Mode");
+	mode_radio = glui->add_radiogroup_to_panel(mode_panel, &draw_mode);
+	glui->add_radiobutton_to_group(mode_radio, "Draw Entity");
+	glui->add_radiobutton_to_group(mode_radio, "Draw Terrain");
 
+	GLUI_Panel *terrain_panel = new GLUI_Panel(glui, "Terrain Type");
+	terrain_radio = glui->add_radiogroup_to_panel(terrain_panel, &tt);
+	glui->add_radiobutton_to_group(terrain_radio, "Basic");
+	glui->add_radiobutton_to_group(terrain_radio, "Woods");
+	glui->add_radiobutton_to_group(terrain_radio, "River");
+	glui->add_radiobutton_to_group(terrain_radio, "Brush");
+	glui->add_radiobutton_to_group(terrain_radio, "Desert");
+	glui->add_radiobutton_to_group(terrain_radio, "Custom");
+
+	glutSetWindow(main_window);
 	glui->set_main_gfx_window(main_window);
 
 	glutMainLoop();

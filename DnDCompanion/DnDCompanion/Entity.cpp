@@ -2,7 +2,11 @@
 
 Entity::Entity()
 {
+<<<<<<< HEAD
 	type = Null;
+=======
+	type = Neutral;
+>>>>>>> origin/master
 }
 
 Entity::Entity(int id, EntityType typ, std::string nm, std::string img, double hp, double sght_rng)

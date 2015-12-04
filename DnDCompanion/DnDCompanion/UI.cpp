@@ -408,7 +408,7 @@ void myMouse(int button, int button_state, int x, int y){
 					x_pos = display_x * x / 720;
 					y_pos = display_y * (720 - y) / 720;
 					map->createEntity(entityID, (EntityType)et, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
-					std::cout << "et" << et <<std::endl;
+					//std::cout << "et" << et <<std::endl;
 					entityID++;
 					break;
 					case 1:
@@ -416,14 +416,15 @@ void myMouse(int button, int button_state, int x, int y){
 					case 2:
 						x_pos = display_x * x / 720;
 						y_pos = display_y * (720 - y) / 720;
-
-						old_x = x_pos + bottom_left_x;
-						old_y = y_pos + bottom_left_y;
-
-						//old_type = map->entitiesAtSquare(x_pos, y_pos)[0]->getType();
-						//old_ID = map->entitiesAtSquare(x_pos, y_pos)[0]->getID();
+						if (map->entitiesAtSquare(x_pos, y_pos).size() > 0){
+							old_x = x_pos + bottom_left_x;
+							old_y = y_pos + bottom_left_y;
+							//std::cout << "old type " << old_type << std::endl;
+							old_type = map->entitiesAtSquare(x_pos, y_pos)[0]->getType();
+							old_ID = map->entitiesAtSquare(x_pos, y_pos)[0]->getID();
+						}
 						//std::cout << "case 2" << std::endl;
-						//std::cout << "old type " << old_type << std::endl;
+						//
 						//std::cout << "old y " << old_y << std::endl;
 						/*get entity at square
 							get x get y
@@ -459,7 +460,7 @@ void myMouse(int button, int button_state, int x, int y){
 				if (map->entitiesAtSquare(old_x, old_y).size() > 0){
 				
 
-					map->createEntity(entityID, (EntityType)et, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
+					map->createEntity(old_ID, (EntityType)old_type, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
 					map->removeEntity(map->entitiesAtSquare(old_x - bottom_left_x, old_y - bottom_left_y)[0]);
 				}
 			}

@@ -36,6 +36,10 @@ int right_x;				//X-Coordinate where right mouse button was down
 int right_y;				//Y-Coordinate where right mouse button was down
 int entityID;				//Default entity ID assigned the new entities then increamented
 int draw_mode;				//If 0 draw entity. If 1 draw terrain.
+
+int old_x;
+int old_y;
+
 TerrainType terrain_type;	//Type of terrain being drawn
 EntityType entity_type;		//Type of Entity selected
 
@@ -45,6 +49,7 @@ GLUI_RadioGroup *entity_radio;
 GLUI_RadioGroup *mode_radio;
 int tt = 0;
 int et = 0;
+
 
 float findxMax(int x){
 
@@ -391,6 +396,7 @@ void myKeyboard(unsigned char Key, int x, int y){
 void myMouse(int button, int button_state, int x, int y){
 	int x_pos;
 	int y_pos;
+
 	if (button_state == GLUT_DOWN){
 		switch (button){
 		case GLUT_LEFT_BUTTON:
@@ -403,7 +409,24 @@ void myMouse(int button, int button_state, int x, int y){
 					map->createEntity(entityID, (EntityType)et, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
 					entityID++;
 					break;
-					/*case 1:
+					case 1:
+						break;
+					case 2:
+						x_pos = display_x * x / 720;
+						y_pos = display_y * (720 - y) / 720;
+
+						old_x = x_pos + bottom_left_x;
+						old_y = y_pos + bottom_left_y;
+						std::cout << "case 2" << std::endl;
+						std::cout << "old x " << old_x << std::endl;
+						std::cout << "old y " << old_y << std::endl;
+						/*get entity at square
+							get x get y
+							store in temp x temp y in MyMouse
+						*/
+
+						break;
+						/*
 					x_pos = display_x * x / 720;
 					y_pos = display_y * (720 - y) / 720;
 					map->updateTerrainAtSquare(terrain_type, x_pos + bottom_left_x, y_pos + bottom_left_y);
@@ -422,6 +445,19 @@ void myMouse(int button, int button_state, int x, int y){
 				y_pos = display_y * (720 - y) / 720;
 				if (map->entitiesAtSquare(x_pos, y_pos).size() > 0){
 					map->removeEntity(map->entitiesAtSquare(x_pos, y_pos)[0]);
+				}
+			}
+			if (x < 720 && (draw_mode == 2)){
+				x_pos = display_x * x / 720;
+				y_pos = display_y * (720 - y) / 720;
+				//std::cout << "new x " << x_pos << std::endl;
+				//std::cout << "new y " << y_pos << std::endl;
+				//std::cout << "old x " << old_x << std::endl;
+				//std::cout << "old y " << old_y << std::endl;
+				if (map->entitiesAtSquare(old_x, old_y).size() > 0){
+					//std::cout << "if statement" << std::endl;
+					map->removeEntity(map->entitiesAtSquare(old_x-bottom_left_x, old_y-bottom_left_y)[0]);
+					map->createEntity(entityID, (EntityType)et, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
 				}
 			}
 			break;
@@ -492,6 +528,7 @@ int main(int argc, char **argv)
 	mode_radio = glui->add_radiogroup_to_panel(mode_panel, &draw_mode);
 	glui->add_radiobutton_to_group(mode_radio, "Draw Entity");
 	glui->add_radiobutton_to_group(mode_radio, "Draw Terrain");
+	glui->add_radiobutton_to_group(mode_radio, "Move Entities");
 
 	GLUI_Panel *terrain_panel = new GLUI_Panel(glui, "Terrain Type");
 	terrain_radio = glui->add_radiogroup_to_panel(terrain_panel, &tt);

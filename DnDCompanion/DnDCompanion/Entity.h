@@ -2,7 +2,7 @@
 #include <string>
 #include <tuple>
 
-enum EntityType { Tank, Melee, Ranged, Magic, Healer, Mob, Boss, Neutral };
+enum EntityType { Tank, Melee, Ranged, Magic, Healer, Mob, Boss, Neutral, Null };
 
 class Entity
 {

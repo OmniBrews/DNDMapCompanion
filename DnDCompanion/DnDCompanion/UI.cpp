@@ -39,7 +39,8 @@ int draw_mode;				//If 0 draw entity. If 1 draw terrain.
 
 int old_x;
 int old_y;
-
+int old_type;
+int old_ID;
 TerrainType terrain_type;	//Type of terrain being drawn
 EntityType entity_type;		//Type of Entity selected
 
@@ -407,6 +408,7 @@ void myMouse(int button, int button_state, int x, int y){
 					x_pos = display_x * x / 720;
 					y_pos = display_y * (720 - y) / 720;
 					map->createEntity(entityID, (EntityType)et, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
+					std::cout << "et" << et <<std::endl;
 					entityID++;
 					break;
 					case 1:
@@ -417,9 +419,12 @@ void myMouse(int button, int button_state, int x, int y){
 
 						old_x = x_pos + bottom_left_x;
 						old_y = y_pos + bottom_left_y;
-						std::cout << "case 2" << std::endl;
-						std::cout << "old x " << old_x << std::endl;
-						std::cout << "old y " << old_y << std::endl;
+
+						//old_type = map->entitiesAtSquare(x_pos, y_pos)[0]->getType();
+						//old_ID = map->entitiesAtSquare(x_pos, y_pos)[0]->getID();
+						//std::cout << "case 2" << std::endl;
+						//std::cout << "old type " << old_type << std::endl;
+						//std::cout << "old y " << old_y << std::endl;
 						/*get entity at square
 							get x get y
 							store in temp x temp y in MyMouse
@@ -450,14 +455,12 @@ void myMouse(int button, int button_state, int x, int y){
 			if (x < 720 && (draw_mode == 2)){
 				x_pos = display_x * x / 720;
 				y_pos = display_y * (720 - y) / 720;
-				//std::cout << "new x " << x_pos << std::endl;
-				//std::cout << "new y " << y_pos << std::endl;
-				//std::cout << "old x " << old_x << std::endl;
-				//std::cout << "old y " << old_y << std::endl;
+
 				if (map->entitiesAtSquare(old_x, old_y).size() > 0){
-					//std::cout << "if statement" << std::endl;
-					map->removeEntity(map->entitiesAtSquare(old_x-bottom_left_x, old_y-bottom_left_y)[0]);
+				
+
 					map->createEntity(entityID, (EntityType)et, x_pos + bottom_left_x, y_pos + bottom_left_y, "Player", "", 10, 30);
+					map->removeEntity(map->entitiesAtSquare(old_x - bottom_left_x, old_y - bottom_left_y)[0]);
 				}
 			}
 			break;

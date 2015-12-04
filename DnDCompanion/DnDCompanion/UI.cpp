@@ -124,40 +124,185 @@ void drawEntity(Entity *E){
 	float xMin = findxMin(xin);
 	float yMax = findyMax(yin);
 	float yMin = findyMin(yin);
-
+	glColor3f(.1, .1, .1);
 	switch (E->getType()){
 	case EntityType::Tank:
-		glColor3f(.1, .1, .2);
+		
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .01, yMin + .08);
+		glVertex2f(xMin + .035, yMin + .02);
+		glVertex2f(xMax - .035, yMin + .02);
+		glVertex2f(xMax - .01, yMin + .08);
+		glVertex2f(xMax - .01, yMax - .02);
+		glVertex2f(xMin + .01, yMax - .02);
+		glEnd();
+
 		break;
 	case EntityType::Melee:
-		glColor3f(.1, .1, .3);
+	
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .05, yMin + .02);
+		glVertex2f(xMax - .05, yMin + .02);
+		glVertex2f(xMax - .05, yMax - .02);
+		glVertex2f(xMin + .05, yMax - .07);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .035, yMin + .055);
+		glVertex2f(xMax - .035, yMin + .055);
+		glVertex2f(xMax - .035, yMin + .045);
+		glVertex2f(xMin + .035, yMin + .045);
+		glEnd();
+
 		break;
 	case EntityType::Ranged:
-		glColor3f(.1, .1, .4);
+		
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .015, yMin + .02);
+		glVertex2f(xMin + .02, yMin + .02);
+		glVertex2f(xMin + .02, yMax - .02);
+		glVertex2f(xMin + .015, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMax - .015, yMin + .02);
+		glVertex2f(xMax - .02, yMin + .02);
+		glVertex2f(xMax - .02, yMax - .02);
+		glVertex2f(xMax - .015, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .044, yMin + .02);
+		glVertex2f(xMax - .044, yMin + .02);
+		glVertex2f(xMax - .044, yMax - .02);
+		glVertex2f(xMin + .044, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .04, yMax - .05);
+		glVertex2f(xMax - .04, yMax - .05);
+		glVertex2f(xMax - .045, yMax - .02);
+		glVertex2f(xMin + .045, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .01, yMax - .05);
+		glVertex2f(xMin + .025, yMax - .05);
+		glVertex2f(xMin + .0175, yMax - .02);
+		glVertex2f(xMin + .0125, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMax - .01, yMax - .05);
+		glVertex2f(xMax - .025, yMax - .05);
+		glVertex2f(xMax - .0175, yMax - .02);
+		glVertex2f(xMax - .0125, yMax - .02);
+		glEnd();
+
+
 		break;
 	case EntityType::Magic:
-		glColor3f(.1, .1, .5);
+		
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .05, yMin + .02);
+		glVertex2f(xMax - .05, yMin + .02);
+		glVertex2f(xMax - .05, yMax - .02);
+		glVertex2f(xMin + .05, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .04, yMax - .05);
+		glVertex2f(xMax - .04, yMax - .05);
+		glVertex2f(xMax - .04, yMax - .02);
+		glVertex2f(xMin + .04, yMax - .02);
+		glEnd();
+
 		break;
 	case EntityType::Healer:
-		glColor3f(.1, .1, .6);
+		
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .035, yMin + .02);
+		glVertex2f(xMax - .035, yMin + .02);
+		glVertex2f(xMax - .035, yMax - .02);
+		glVertex2f(xMin + .035, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .01, yMin + .06);
+		glVertex2f(xMax - .01, yMin + .06);
+		glVertex2f(xMax - .01, yMax - .06);
+		glVertex2f(xMin + .01, yMax - .06);
+		glEnd();
+
 		break;
 	case EntityType::Mob:
-		glColor3f(.1, .1, .7);
+		
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .015, yMin + .02);
+		glVertex2f(xMin + .02, yMin + .02);
+		glVertex2f(xMin + .02, yMax - .02);
+		glVertex2f(xMin + .015, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMax - .015, yMin + .02);
+		glVertex2f(xMax - .02, yMin + .02);
+		glVertex2f(xMax - .02, yMax - .02);
+		glVertex2f(xMax - .015, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .044, yMin + .02);
+		glVertex2f(xMax - .044, yMin + .02);
+		glVertex2f(xMax - .044, yMax - .02);
+		glVertex2f(xMin + .044, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .015, yMax - .05);
+		glVertex2f(xMin + .045, yMax - .05);
+		glVertex2f(xMin + .045, yMax - .02);
+		glVertex2f(xMin + .015, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMax - .015, yMax - .05);
+		glVertex2f(xMax - .045, yMax - .05);
+		glVertex2f(xMax - .045, yMax - .02);
+		glVertex2f(xMax - .015, yMax - .02);
+		glEnd();
+
 		break;
 	case EntityType::Boss:
-		glColor3f(.1, .1, .8);
+		
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .01, yMin + .02);
+		glVertex2f(xMin + .03, yMin + .02);
+		glVertex2f(xMax - .03, yMax - .02);
+		glVertex2f(xMax - .01, yMax - .02);
+		glEnd();
+
+		glBegin(GL_POLYGON);
+		glVertex2f(xMax - .01, yMin + .02);
+		glVertex2f(xMax - .03, yMin + .02);
+		glVertex2f(xMin + .03, yMax - .02);
+		glVertex2f(xMin + .01, yMax - .02);
+		glEnd();
+
 		break;
 	case EntityType::Neutral:
-		glColor3f(.1, .1, .9);
+		
+		glBegin(GL_POLYGON);
+		glVertex2f(xMin + .02, yMin + .03);
+		glVertex2f(xMax - .02, yMin + .03);
+		glVertex2f(xMax - .02, yMax - .03);
+		glVertex2f(xMin + .02, yMax - .03);
+		glEnd();
+
 		break;
 	}
 	//glColor3f(.2, .5, .2);
-	glBegin(GL_POLYGON);
-	glVertex2f(xMin + .01, yMin + .02);
-	glVertex2f(xMax - .01, yMin + .02);
-	glVertex2f(xMax - .01, yMax - .02);
-	glVertex2f(xMin + .01, yMax - .02);
-	glEnd();
+
 	//glFlush();
 }
 

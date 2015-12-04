@@ -54,7 +54,7 @@ void Map::updateTerrainAtSquare(TerrainType t, int x, int y){
 void Map::addEntity(Entity e)
 {
 	entity_list.push_back(e);
-	terrain_map[e.getX()][e.getY()].addEntity(&e);
+	terrain_map[e.getX()][e.getY()].addEntity(findEntity(e.getID()));
 }
 
 void Map::createEntity(int entity_ID, EntityType type, int x, int y, std::string name, std::string image, double health, double sight_range)
@@ -169,12 +169,12 @@ void Map::loadFromFile(std::string fileName)
 
 		std::getline(loadFile, line);
 		std::getline(loadFile, line);
-		while (line.compare("Terrain") != 0)
+		while (line.compare("Terrain"))
 		{
 			int entity_ID, type, x_pos, y_pos;
 			double health;
 			double sight_range;
-			std::string name;
+			std::string name = "Player";
 			std::stringstream ss(line);
 			ss >> entity_ID;
 			ss >> type;
@@ -182,10 +182,11 @@ void Map::loadFromFile(std::string fileName)
 			ss >> y_pos;
 			ss >> health;
 			ss >> sight_range;
-			std::getline(ss, name);
-			Entity temp = Entity(entity_ID, (EntityType)type, name, "", health, sight_range);
-			temp.setPostion(x_pos, y_pos);
-			addEntity(temp);
+			//std::getline(ss, name);
+			Entity *temp = new Entity(entity_ID, (EntityType)type, name, "", health, sight_range);
+			temp->setPostion(x_pos, y_pos);
+			entity_list.push_back(*temp);
+			terrain_map[x_pos][y_pos].addEntity(temp);
 			std::getline(loadFile, line);
 		}
 
@@ -198,12 +199,12 @@ void Map::loadFromFile(std::string fileName)
 				int type;
 				ss >> type;
 				terrain_map[i][j].updateTerrainType((TerrainType)type);
-				while (!ss.eof())
+				/*while (!ss.eof())
 				{
 					int id;
 					ss >> id;
 					terrain_map[i][j].addEntity(findEntity(id));
-				}
+				}*/
 			}
 		}
 	}

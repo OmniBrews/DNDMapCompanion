@@ -2,7 +2,7 @@
 
 Entity::Entity()
 {
-	type = NullEntity;
+	type = Null;
 }
 
 Entity::Entity(int id, EntityType typ, std::string nm, std::string img, double hp, double sght_rng)
@@ -17,7 +17,7 @@ Entity::Entity(int id, EntityType typ, std::string nm, std::string img, double h
 
 bool Entity::isNull()
 {
-	return type == NullEntity;
+	return type == Null;
 }
 
 int Entity::getID()

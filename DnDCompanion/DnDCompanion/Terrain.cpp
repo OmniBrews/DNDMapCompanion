@@ -21,7 +21,7 @@ TerrainType Terrain::getType()
 
 std::string Terrain::getImage()
 {
-	return type != Custom ? "" : custom_image;
+	return "";
 }
 
 std::vector<Entity*> Terrain::getEntities()

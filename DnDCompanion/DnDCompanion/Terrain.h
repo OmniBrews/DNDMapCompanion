@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "Entity.h"
 
-enum TerrainType { Basic, Woods, River, Brush, Desert, Custom };
+enum TerrainType { Basic, Woods, River, Brush, Desert, Wall };
 
 class Terrain
 {

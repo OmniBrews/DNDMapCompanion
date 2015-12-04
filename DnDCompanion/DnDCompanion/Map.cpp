@@ -105,3 +105,110 @@ Entity* Map::findEntity(int entity_ID)
 	}
 	return new Entity();
 }
+
+
+void Map::saveToFile(std::string fileName)
+{
+	std::ofstream saveFile;
+	saveFile.open(fileName);
+	saveFile << getMapWidth() << " " << getMapHeight() << "\n";
+	saveFile << "Entities\n";
+	for (int i = 0; i < entity_list.size(); i++)
+	{
+		saveFile << entity_list[i].getID() << " ";
+		saveFile << entity_list[i].getType() << " ";
+		saveFile << entity_list[i].getX() << " ";
+		saveFile << entity_list[i].getY() << " ";
+		saveFile << entity_list[i].getHealth() << " ";
+		saveFile << entity_list[i].getSightRange() << " ";
+		saveFile << entity_list[i].getName() << "\n";
+	}
+	saveFile << "Terrain\n";
+	for (int x = 0; x < getMapWidth(); x++)
+	{
+		for (int y = 0; y < getMapHeight(); y++)
+		{
+			saveFile << terrainAtSquare(x, y).getType();
+			if (!terrainAtSquare(x, y).getEntities().empty())
+			{
+				std::vector<Entity *> temp = terrainAtSquare(x, y).getEntities();
+				saveFile << " " << terrainAtSquare(x, y).getEntities()[0]->getID();
+				for (int i = 1; i < terrainAtSquare(x, y).getEntities().size(); i++)
+				{
+					saveFile << " " << terrainAtSquare(x, y).getEntities()[i]->getID();
+				}
+			}
+			saveFile << "\n";
+		}
+	}
+	saveFile.close();
+}
+
+void Map::loadFromFile(std::string fileName)
+{
+	std::ifstream loadFile;
+	loadFile.open(fileName.c_str());
+	entity_list.clear();
+	terrain_map.clear();
+	try
+	{
+		std::string line;
+		std::getline(loadFile, line);
+		std::stringstream sss(line);
+		sss >> x_size >> y_size;
+
+		for (int i = 0; i < x_size; i++)
+		{
+			std::vector<Terrain> tempVector;
+			for (int j = 0; j < y_size; j++)
+			{
+				tempVector.push_back(Terrain());
+			}
+			terrain_map.push_back(tempVector);
+		}
+
+		std::getline(loadFile, line);
+		std::getline(loadFile, line);
+		while (line.compare("Terrain") != 0)
+		{
+			int entity_ID, type, x_pos, y_pos;
+			double health;
+			double sight_range;
+			std::string name;
+			std::stringstream ss(line);
+			ss >> entity_ID;
+			ss >> type;
+			ss >> x_pos;
+			ss >> y_pos;
+			ss >> health;
+			ss >> sight_range;
+			std::getline(ss, name);
+			Entity temp = Entity(entity_ID, (EntityType)type, name, "", health, sight_range);
+			temp.setPostion(x_pos, y_pos);
+			addEntity(temp);
+			std::getline(loadFile, line);
+		}
+
+		for (int i = 0; i < x_size; i++)
+		{
+			for (int j = 0; j < y_size; j++)
+			{
+				std::getline(loadFile, line);
+				std::stringstream ss(line);
+				int type;
+				ss >> type;
+				terrain_map[i][j].updateTerrainType((TerrainType)type);
+				while (!ss.eof())
+				{
+					int id;
+					ss >> id;
+					terrain_map[i][j].addEntity(findEntity(id));
+				}
+			}
+		}
+	}
+	catch (int e)
+	{
+
+	}
+}

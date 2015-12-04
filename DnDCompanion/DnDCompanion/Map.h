@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include "Terrain.h"
 #include "Entity.h"
 
@@ -25,5 +28,6 @@ public:
 	void removeEntity(Entity* entity);
 	void removeEntity(int entity_ID);
 	Entity* findEntity(int entity_ID);
-
+	void saveToFile(std::string fileName);
+	void loadFromFile(std::string fileName);
 };
